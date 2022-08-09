@@ -13,12 +13,15 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class ChatController {
 
+    // every route is prefixed with /app, so we have /app/chat.sendMessage
+    // this route handles sedning messages
     @MessageMapping("/chat.sendMessage")
     @SendTo("/topic/public")
     public ChatMessage sendMessage(@Payload ChatMessage chatMessage) {
         return chatMessage;
     }
 
+    // this route handles adding user
     @MessageMapping("/chat.addUser")
     @SendTo("/topic/public")
     public ChatMessage addUser(@Payload ChatMessage chatMessage,
@@ -27,5 +30,8 @@ public class ChatController {
         headerAccessor.getSessionAttributes().put("username", chatMessage.getSender());
         return chatMessage;
     }
+
+    // handles a route for adding connections
+    // @MessageMapping("/chat.addUser")
 
 }

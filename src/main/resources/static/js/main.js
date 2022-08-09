@@ -11,17 +11,29 @@ var connectingElement = document.querySelector('.connecting');
 var stompClient = null;
 var username = null;
 
+// ? this won't work becasue each connection is independent
+var numOfConnections = 0;
+
 var colors = [
     '#2196F3', '#32c787', '#00BCD4', '#ff5652',
     '#ffc107', '#ff85af', '#FF9800', '#39bbb0'
 ];
 
+
+// this allows us to connect to the server
 function connect(event) {
     username = document.querySelector('#name').value.trim();
 
     if(username) {
         usernamePage.classList.add('hidden');
         chatPage.classList.remove('hidden');
+
+
+        // numOfConnections++; // add number of connection
+        // change the number of number of connections.
+        // const span = document.querySelector('#number-connected');
+        // span.innerHTML = numOfConnections;
+        // console.log('Number of connections changed to ' + numOfConnections);
 
         var socket = new SockJS('/ws');
         stompClient = Stomp.over(socket);
@@ -45,7 +57,7 @@ function onConnected() {
     connectingElement.classList.add('hidden');
 }
 
-
+// error handlers
 function onError(error) {
     connectingElement.textContent = 'Could not connect to WebSocket server. Please refresh this page to try again!';
     connectingElement.style.color = 'red';
@@ -75,12 +87,30 @@ function onMessageReceived(payload) {
     var messageElement = document.createElement('li');
 
     if(message.type === 'JOIN') {
+        // if a user joins
         messageElement.classList.add('event-message');
         message.content = message.sender + ' joined!';
+
+
+        // change the number of number of connections.
+        // TODO we want to something here and update the online numbers,
+        // TODO but this is currently stateless
+        const span = document.querySelector('#number-connected');
+        span.innerHTML = ++span.innerHTML;
+
+
     } else if (message.type === 'LEAVE') {
+        // if a user leaves
         messageElement.classList.add('event-message');
         message.content = message.sender + ' left!';
+
+        // TODO we want to something here and update the online numbers
+        const span = document.querySelector('#number-connected');
+        span.innerHTML = --span.innerHTML;
+
+
     } else {
+        // else display a message
         messageElement.classList.add('chat-message');
 
         var avatarElement = document.createElement('i');

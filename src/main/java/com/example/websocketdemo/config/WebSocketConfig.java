@@ -8,7 +8,7 @@ import org.springframework.web.socket.config.annotation.*;
  * Created by rajeevkumarsingh on 24/07/17.
  */
 @Configuration
-@EnableWebSocketMessageBroker
+@EnableWebSocketMessageBroker // this enables to use WebSocket server
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override

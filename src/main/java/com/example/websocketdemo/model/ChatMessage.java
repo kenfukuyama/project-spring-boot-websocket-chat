@@ -4,16 +4,20 @@ package com.example.websocketdemo.model;
  * Created by rajeevkumarsingh on 24/07/17.
  */
 public class ChatMessage {
+    public static int numOfConnections = 0;
+
     private MessageType type;
     private String content;
     private String sender;
 
     public enum MessageType {
+        
         CHAT,
         JOIN,
         LEAVE
     }
 
+    // getters and setters
     public MessageType getType() {
         return type;
     }
