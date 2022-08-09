@@ -26,7 +26,9 @@ public class WebSocketEventListener {
     // we listens when the user connects
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
+        // there will be on consle, tryb to put it in the front
         logger.info("Received a new web socket connection");
+
     }
 
 
@@ -39,7 +41,7 @@ public class WebSocketEventListener {
         if(username != null) {
             logger.info("User Disconnected : " + username);
 
-            // creats nwew chatMessage
+            // creats nwew chatMessage, that tells user has left
             ChatMessage chatMessage = new ChatMessage();
             chatMessage.setType(ChatMessage.MessageType.LEAVE);
             chatMessage.setSender(username);

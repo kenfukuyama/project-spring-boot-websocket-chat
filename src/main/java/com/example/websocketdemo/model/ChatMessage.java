@@ -4,14 +4,15 @@ package com.example.websocketdemo.model;
  * Created by rajeevkumarsingh on 24/07/17.
  */
 public class ChatMessage {
+    // TODO probably not here.
     public static int numOfConnections = 0;
 
     private MessageType type;
     private String content;
     private String sender;
 
+    // these are custom data types
     public enum MessageType {
-        
         CHAT,
         JOIN,
         LEAVE

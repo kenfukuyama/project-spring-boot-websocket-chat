@@ -300,6 +300,11 @@ button.accent {
 
 /* online number */
 .online-number {
-    color: greenyellow;
+    color: green;
+}
+
+.right{
+    background-color:#ee706e;
+    /* float:right; */
 }
 

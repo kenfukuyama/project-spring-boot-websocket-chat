@@ -84,6 +84,7 @@ function sendMessage(event) {
 function onMessageReceived(payload) {
     var message = JSON.parse(payload.body);
 
+    // create list element
     var messageElement = document.createElement('li');
 
     if(message.type === 'JOIN') {
@@ -111,21 +112,50 @@ function onMessageReceived(payload) {
 
     } else {
         // else display a message
+
+        // console.log(username)
+        // console.log(message.sender)
+
+
         messageElement.classList.add('chat-message');
 
-        var avatarElement = document.createElement('i');
-        var avatarText = document.createTextNode(message.sender[0]);
-        avatarElement.appendChild(avatarText);
-        avatarElement.style['background-color'] = getAvatarColor(message.sender);
+        if (username == message.sender) {
+            // if it is the user
+            
+            messageElement.style['background-color'] = '#ee706e';
+            messageElement.style['text-align'] = 'right';
+            // messageElement.style['display'] = 'flex';
+            // messageElement.style['margin-left'] = 'auto';
+            // messageElement.style['margin-right'] = '0';
 
-        messageElement.appendChild(avatarElement);
+            // username and text element
+            var usernameElement = document.createElement('span');
+            var usernameText = document.createTextNode('Me');
 
-        var usernameElement = document.createElement('span');
-        var usernameText = document.createTextNode(message.sender);
+        }
+        else {
+            messageElement.style['background-color'] = 'rgb(116, 220, 129)';
+             // avator pic and first initial
+            var avatarElement = document.createElement('i');
+
+            var avatarText = document.createTextNode(message.sender[0]);
+            avatarElement.appendChild(avatarText);
+            avatarElement.style['background-color'] = getAvatarColor(message.sender);
+
+            messageElement.appendChild(avatarElement);
+
+
+            var usernameElement = document.createElement('span');
+            var usernameText = document.createTextNode(message.sender);
+        }
+
+        
         usernameElement.appendChild(usernameText);
+
         messageElement.appendChild(usernameElement);
     }
 
+    // create and element and also seeting the textNode
     var textElement = document.createElement('p');
     var messageText = document.createTextNode(message.content);
     textElement.appendChild(messageText);
