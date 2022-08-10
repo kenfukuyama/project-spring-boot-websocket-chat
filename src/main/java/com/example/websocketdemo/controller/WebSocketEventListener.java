@@ -10,10 +10,9 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
+import org.springframework.web.socket.config.WebSocketMessageBrokerStats;
 
-/**
- * Created by rajeevkumarsingh on 25/07/17.
- */
+// we listens to socket eventts (connect or disconnect)
 @Component
 public class WebSocketEventListener {
 
@@ -23,21 +22,35 @@ public class WebSocketEventListener {
     @Autowired
     private SimpMessageSendingOperations messagingTemplate;
 
+    @Autowired
+    private WebSocketMessageBrokerStats webSocketMessageBrokerStats;
+
     // we listens when the user connects
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectedEvent event) {
-        // there will be on consle, tryb to put it in the front
+        // there will be on consle, if you try to put it in the front
         logger.info("Received a new web socket connection");
 
+        // StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+        // String username = (String) headerAccessor.getSessionAttributes().get("username");
+        // WebSocketMessageBrokerStats stats = new WebSocketMessageBrokerStats();
+
+        System.out.println(webSocketMessageBrokerStats.getWebSocketSessionStatsInfo());
     }
 
 
     // we listens when the user disconnects
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
+        // headerAccessor finds metadata
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
 
         String username = (String) headerAccessor.getSessionAttributes().get("username");
+
+
+
+
+
         if(username != null) {
             logger.info("User Disconnected : " + username);
 
@@ -47,7 +60,11 @@ public class WebSocketEventListener {
             chatMessage.setSender(username);
 
             // board cast to everyone
+            // this is similar to            @SendTo("/topic/public"), return chatMessage
             messagingTemplate.convertAndSend("/topic/public", chatMessage);
+            
+
         }
+        System.out.println(webSocketMessageBrokerStats.getWebSocketSessionStatsInfo());
     }
 }

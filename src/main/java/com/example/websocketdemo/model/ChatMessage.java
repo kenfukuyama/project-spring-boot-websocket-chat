@@ -4,8 +4,6 @@ package com.example.websocketdemo.model;
  * Created by rajeevkumarsingh on 24/07/17.
  */
 public class ChatMessage {
-    // TODO probably not here.
-    public static int numOfConnections = 0;
 
     private MessageType type;
     private String content;

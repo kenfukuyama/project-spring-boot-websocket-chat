@@ -20,6 +20,8 @@ var colors = [
 ];
 
 
+
+// ! connection and subscription to the socket =================================
 // this allows us to connect to the server
 function connect(event) {
     username = document.querySelector('#name').value.trim();
@@ -27,6 +29,7 @@ function connect(event) {
     if(username) {
         usernamePage.classList.add('hidden');
         chatPage.classList.remove('hidden');
+        document.querySelector('#username').innerHTML = "Welcome " + username + "!";
 
 
         // numOfConnections++; // add number of connection
@@ -37,7 +40,6 @@ function connect(event) {
 
         var socket = new SockJS('/ws');
         stompClient = Stomp.over(socket);
-
         stompClient.connect({}, onConnected, onError);
     }
     event.preventDefault();
@@ -47,6 +49,11 @@ function connect(event) {
 function onConnected() {
     // Subscribe to the Public Topic
     stompClient.subscribe('/topic/public', onMessageReceived);
+    // ? subsribe to differnt channels
+    if (username == "kenny") {
+        stompClient.subscribe('/topic/private', onMessageReceived);
+    }
+
 
     // Tell your username to the server
     stompClient.send("/app/chat.addUser",
@@ -57,13 +64,15 @@ function onConnected() {
     connectingElement.classList.add('hidden');
 }
 
-// error handlers
+
+// ! error handlers =============================================================
 function onError(error) {
     connectingElement.textContent = 'Could not connect to WebSocket server. Please refresh this page to try again!';
     connectingElement.style.color = 'red';
 }
 
 
+// ! send message ===============================================================
 function sendMessage(event) {
     var messageContent = messageInput.value.trim();
 
@@ -73,16 +82,29 @@ function sendMessage(event) {
             content: messageInput.value,
             type: 'CHAT'
         };
-
         stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
-        messageInput.value = '';
+
+        // send mesasge to specifi channels
+        var chatMessagePrivate = {
+            sender: username,
+            content: messageInput.value + " private",
+            type: 'CHAT'
+        };
+        stompClient.send("/app/chat.sendMessagePrivate", {}, JSON.stringify(chatMessagePrivate));
+
+        
+        messageInput.value = ''; // empty the inputn value
     }
     event.preventDefault();
 }
 
 
+
+
+// ! handles incoming messages ===============================================
 function onMessageReceived(payload) {
     var message = JSON.parse(payload.body);
+    console.log(message);
 
     // create list element
     var messageElement = document.createElement('li');
@@ -94,8 +116,7 @@ function onMessageReceived(payload) {
 
 
         // change the number of number of connections.
-        // TODO we want to something here and update the online numbers,
-        // TODO but this is currently stateless
+        // TODO we want to something here and update the online numbers, but this is currently stateless
         const span = document.querySelector('#number-connected');
         span.innerHTML = ++span.innerHTML;
 
@@ -167,6 +188,7 @@ function onMessageReceived(payload) {
 }
 
 
+// ! avatar color =================================================================
 function getAvatarColor(messageSender) {
     var hash = 0;
     for (var i = 0; i < messageSender.length; i++) {
@@ -177,5 +199,7 @@ function getAvatarColor(messageSender) {
     return colors[index];
 }
 
+
+// ! eventhandler for submit buttons ===============================================
 usernameForm.addEventListener('submit', connect, true)
 messageForm.addEventListener('submit', sendMessage, true)
