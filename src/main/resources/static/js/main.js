@@ -14,6 +14,9 @@ var username = null;
 // ? this won't work becasue each connection is independent
 var numOfConnections = 0;
 
+// * room selection\
+// var roomSelection = document.querySelector('input[name="room"]:checked');
+
 var colors = [
     '#2196F3', '#32c787', '#00BCD4', '#ff5652',
     '#ffc107', '#ff85af', '#FF9800', '#39bbb0'
@@ -27,9 +30,13 @@ function connect(event) {
     username = document.querySelector('#name').value.trim();
 
     if(username) {
+        // change the approqaite html elements
         usernamePage.classList.add('hidden');
         chatPage.classList.remove('hidden');
+        var roomName = document.querySelector('#room-name');
+        roomName.innerHTML = document.querySelector('input[name="room"]:checked').value;
         document.querySelector('#username').innerHTML = "Welcome " + username + "!";
+
 
 
         // numOfConnections++; // add number of connection
@@ -47,12 +54,22 @@ function connect(event) {
 
 
 function onConnected() {
+    // ! change here for the subscription channels
     // Subscribe to the Public Topic
     stompClient.subscribe('/topic/public', onMessageReceived);
-    // ? subsribe to differnt channels
-    if (username == "kenny") {
-        stompClient.subscribe('/topic/private', onMessageReceived);
+    // * subsribe to differnt channels
+    
+    // if (username == "kenny") {
+    //     stompClient.subscribe('/topic/private', onMessageReceived);
+    // }
+    // stompClient.subscribe('/topic/private', onMessageReceived);
+    // stompClient.subscribe('/topic/room1', onMessageReceived);
+    var roomSelection = document.querySelector('input[name="room"]:checked').value;
+    // console.log(roomSelection);
+    if (roomSelection) {
+        stompClient.subscribe(`/topic/${roomSelection}`, onMessageReceived);
     }
+    // stompClient.subscribe('/topic/room1', onMessageReceived);
 
 
     // Tell your username to the server
@@ -77,20 +94,36 @@ function sendMessage(event) {
     var messageContent = messageInput.value.trim();
 
     if(messageContent && stompClient) {
-        var chatMessage = {
+        // ! change this for send message channel
+        // public chat
+        // var chatMessage = {
+        //     sender: username,
+        //     content: messageInput.value,
+        //     type: 'CHAT'
+        // };
+        // stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
+
+        // send mesasge to specifi channels
+        // var chatMessagePrivate = {
+        //     sender: username,
+        //     content: messageInput.value + " private",
+        //     type: 'CHAT'
+        // };
+
+        // stompClient.send("/app/chat.sendMessagePrivate", {}, JSON.stringify(chatMessagePrivate));
+        // stompClient.send("/app/chat.sendMessageroom1", {}, JSON.stringify(chatMessagePrivate));
+        // stompClient.send(`/app/chat.sendMessage${roomSelection}`, {}, JSON.stringify(chatMessagePrivate));
+
+        
+        // room send message
+        var roomSelection = document.querySelector('input[name="room"]:checked').value;
+        var chatMessageRoom = {
             sender: username,
             content: messageInput.value,
             type: 'CHAT'
         };
-        stompClient.send("/app/chat.sendMessage", {}, JSON.stringify(chatMessage));
 
-        // send mesasge to specifi channels
-        var chatMessagePrivate = {
-            sender: username,
-            content: messageInput.value + " private",
-            type: 'CHAT'
-        };
-        stompClient.send("/app/chat.sendMessagePrivate", {}, JSON.stringify(chatMessagePrivate));
+        stompClient.send(`/app/chat.sendMessage${roomSelection}`, {}, JSON.stringify(chatMessageRoom));
 
         
         messageInput.value = ''; // empty the inputn value
@@ -103,8 +136,8 @@ function sendMessage(event) {
 
 // ! handles incoming messages ===============================================
 function onMessageReceived(payload) {
+    // message is only one at a time
     var message = JSON.parse(payload.body);
-    console.log(message);
 
     // create list element
     var messageElement = document.createElement('li');

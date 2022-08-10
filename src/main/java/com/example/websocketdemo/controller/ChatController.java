@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 @Controller
 public class ChatController {
 
+    // ! edit the mapping and routes to handle messages
     // every route is prefixed with /app, so we have /app/chat.sendMessage
     // /chat.sendMessage is handdled by sendMessage
     @MessageMapping("/chat.sendMessage")
@@ -21,12 +22,38 @@ public class ChatController {
         return chatMessage;
     }
 
-    // get all the messages to private
+    // get all the messages to private "/topic/private"
     @MessageMapping("/chat.sendMessagePrivate")
     @SendTo("/topic/private")
     public ChatMessage sendMessagePrivate(@Payload ChatMessage chatMessage) { 
         return chatMessage;
     }
+
+
+    @MessageMapping("/chat.sendMessageroom1")
+    @SendTo("/topic/room1")
+    public ChatMessage sendMessagePrivateRoom1(@Payload ChatMessage chatMessage) { 
+        return chatMessage;
+    }
+
+    @MessageMapping("/chat.sendMessageroom2")
+    @SendTo("/topic/room2")
+    public ChatMessage sendMessagePrivateRoom2(@Payload ChatMessage chatMessage) { 
+        return chatMessage;
+    }
+
+    // // to specific room
+    // @MessageMapping("/chat.sendMessageroom1")
+    // @SendTo("/topic/room1")
+    // public ChatMessage sendMessagePrivateRoom1(@Payload ChatMessage chatMessage) { 
+    //     return chatMessage;
+    // }
+
+    // @MessageMapping("/chat.sendMessageroom2")
+    // @SendTo("/topic/room2")
+    // public ChatMessage sendMessagePrivateRoom2(@Payload ChatMessage chatMessage) { 
+    //     return chatMessage;
+    // }
 
     
     // this route handles adding user

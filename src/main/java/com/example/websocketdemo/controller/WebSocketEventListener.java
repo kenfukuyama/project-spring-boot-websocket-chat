@@ -35,6 +35,7 @@ public class WebSocketEventListener {
         // String username = (String) headerAccessor.getSessionAttributes().get("username");
         // WebSocketMessageBrokerStats stats = new WebSocketMessageBrokerStats();
 
+        // TODO disable for deployment since it prints everytime user connects and disconnects
         System.out.println(webSocketMessageBrokerStats.getWebSocketSessionStatsInfo());
     }
 
